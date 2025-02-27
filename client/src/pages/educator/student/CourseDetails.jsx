@@ -9,6 +9,7 @@ import YouTube from "react-youtube";
 
 const CourseDetails = () => {
   const {id} = useParams();
+  
   const [courseData, setCourseData] = useState(null);
   const [openSection, setOpenSection] = useState({});
 
@@ -20,8 +21,7 @@ const [plyayerData,setPlayerData] =useState(null)
     useContext(AppContext);
 
   const fetchCourseData = async () => {
-    const findCourse = allCourses.find((course) => course._id === id);
-    // console.log(allCourses)
+    const findCourse = allCourses.find((course) => String(course._id) === String(id));
     setCourseData(findCourse);
   };
 
@@ -35,7 +35,7 @@ const [plyayerData,setPlayerData] =useState(null)
       [index]: !prev[index],
     }));
   };
-
+console.log('loo',courseData)
   return courseData ? (
     <>
     <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-20 text-left">
@@ -79,7 +79,7 @@ const [plyayerData,setPlayerData] =useState(null)
                     <p className="font-medium md:text-base text-sm">{chapter.chapterTitle}</p>
                   </div>
                   <p className="text-sm md:text-default">
-                    {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
+                    {/* {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)} */}
                   </p>
                 </div>
                 <div className={`overflow-hidden transition-all duration-500 ${openSection[index] ? 'max-h-96' : 'max-h-0'}`}>
@@ -144,12 +144,12 @@ const [plyayerData,setPlayerData] =useState(null)
             <div className='h-4 w-px bg-gray-500/40'></div>
             <div className='flex items-center gap-2'>
               <img src={assets.time_clock_icon} alt="clock icon" className="w-4" />
-              <p>{calculatecourseDuration(courseData)}</p>
+              {/* <p>{calculatecourseDuration(courseData)}</p> */}
             </div>
             <div className='h-4 w-px bg-gray-500/40'></div>
             <div className='flex items-center gap-2'>
               <img src={assets.lesson_icon} alt="clock icon" className="w-4" />
-              <p>{calculateNoOfLectures(courseData)} lessons</p>
+              {/* <p>{calculateNoOfLectures(courseData)} lessons</p> */}
             </div>
 
           </div>
