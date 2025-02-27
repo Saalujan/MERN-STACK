@@ -5,20 +5,23 @@ import Loading from "../../../components/student/Loading";
 import { assets } from "../../../assets/assets";
 import humanizeDuration from "humanize-duration";
 import Footer from "../../../components/student/Footer";
+import YouTube from "react-youtube";
 
 const CourseDetails = () => {
-  const { id } = useParams();
+  const {id} = useParams();
   const [courseData, setCourseData] = useState(null);
   const [openSection, setOpenSection] = useState({});
 
   const[isAlreadyenrolled,setIsAlreadyEnrolled] = useState(false)
+const [plyayerData,setPlayerData] =useState(null)
+
 
   const { allCourses, calculateRating, calculateNoOfLectures, calculateChapterTime, calculatecourseDuration, currency } =
     useContext(AppContext);
 
   const fetchCourseData = async () => {
     const findCourse = allCourses.find((course) => course._id === id);
-    console.log(allCourses)
+    // console.log(allCourses)
     setCourseData(findCourse);
   };
 
@@ -87,7 +90,11 @@ const CourseDetails = () => {
                         <div>
                           <p>{lecture.lectureTitle}</p>
                           <div>
-                            {lecture.isPreviewFree && <p>Preview</p>}
+                            {lecture.isPreviewFree && <p
+                            onClick={()=>setPlayerData({
+                              videoId:lecture.lectureUrl.split('/').pop()
+                            })}
+                             className="text-blue-500 cursor-pointer">Preview</p>}
                             <p>{humanizeDuration(lecture.lectureDuration * 60 * 1000, { units: ["h", "m"] })}</p>
                           </div>
                         </div>
@@ -111,7 +118,14 @@ const CourseDetails = () => {
         <img src={courseData.courseThumbnail} alt="course_thumbnail" className="w-96 h-60 rounded-lg" />
         <div className='p-5'>
           <div className='flex items-center gap-2'>
-            <img src={assets.time_left_clock_icon} alt="time_left_clock_icon" className="w-4" />
+
+{
+  plyayerData ?
+  <YouTube videoId={plyayerData.videoId} opts={{playerVars:{autoplay:1}}} iframeClassName="w-full aspect-video"/>
+:<img src={assets.time_left_clock_icon} alt="time_left_clock_icon" className="w-4" />
+}
+
+            
             <p className='text-red-500'>
               <span className='font-medium'>5</span> days left at this price!
             </p>
