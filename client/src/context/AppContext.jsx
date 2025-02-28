@@ -10,6 +10,7 @@ export const AppContextProvider = (props) => {
 
   const [allCourses, setAllCourses] = useState([]);
   const [isEducator, setIsEducator] = useState(true);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
   // Fetch all courses properly
   const fetchAllCourses = async () => {
@@ -18,7 +19,8 @@ export const AppContextProvider = (props) => {
 
   // Call fetchAllCourses inside useEffect
   useEffect(() => {
-    fetchAllCourses();
+    fetchAllCourses()
+    fetchUserEnrolledCourses();
   }, []);
 
   // Function to calculate average rating of a course
@@ -32,8 +34,14 @@ export const AppContextProvider = (props) => {
     });
     return totalRating / course.courseRatings.length;
   };
+//fetch user enrolled courses
+  const fetchUserEnrolledCourses =async ()=>
+  {
+    setEnrolledCourses(dummyCourses)
+  }
 
-  const value = { currency, allCourses, navigate, calculateRating, isEducator, setIsEducator };
+  const value = { currency, allCourses, navigate, calculateRating, isEducator, setIsEducator,enrolledCourses,fetchUserEnrolledCourses };
 
-  return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;
+  return <AppContext.Provider value={value}>
+  {props.children}</AppContext.Provider>;
 };
