@@ -1,6 +1,8 @@
 import { clerkClient } from "@clerk/express";
 import Course from "../models/Course.js";
+import User from "../models/User.js";
 import { Purchase } from "../models/Purchase.js";
+import { v2 as cloudinary } from 'cloudinary';
 
 export const updateRoleToEducator = async (req, res) => {
   try {
@@ -17,7 +19,7 @@ export const updateRoleToEducator = async (req, res) => {
   }
 };
 
-//add ne w course
+//add new course
 export const addCourse = async (req, res) => {
   try {
     const { courseData } = req.body;
@@ -30,7 +32,7 @@ export const addCourse = async (req, res) => {
     const parseCoursedata = await JSON.parse(courseData);
     parseCoursedata.educator = educatorId;
     const newCourse = await Course.create(parseCoursedata);
-    await cloudinary.uploader.upload(imagefile.path);
+    const imageUpload = await cloudinary.uploader.upload(imagefile.path);
     newCourse.courseThumbnail = imageUpload.secure_url;
     await newCourse.save();
 
@@ -39,6 +41,7 @@ export const addCourse = async (req, res) => {
     res.json({ success: false, message: "error msg" });
   }
 };
+
 //get educator courses
 export const getEducatorCourses = async (req, res) => {
   try {
@@ -49,13 +52,14 @@ export const getEducatorCourses = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+
 //educator dashboard
-export const educatorDashboardData = async () => {
+export const educatorDashboardData = async (req, res) => {
   try {
     const educator = req.auth.userId;
     const courses = await Course.find({ educator });
     const totalcourses = courses.length;
-    const courseIds = courses.map((courses) => course._id);
+    const courseIds = courses.map((course) => course._id);
 
     //calculate total earnings from purchases
     const purchases = await Purchase.find({
@@ -97,6 +101,7 @@ export const educatorDashboardData = async () => {
     res.json({ success: false, message: error.message });
   }
 };
+
 //get enrolled students data with purchase data
 export const getEnrolledStudentsData = async (req, res) => {
   try {
@@ -107,19 +112,16 @@ export const getEnrolledStudentsData = async (req, res) => {
       courseId: { $in: courseIds },
       status: "completed",
     })
-      .populate("us$r1d", "name imageUrl")
+      .populate("userId", "name imageUrl")
       .populate("courseId", "courseTitle");
 
-      const enrolledStudents = purchases.map(purchase => ({
-        student: purchase.userId,
-        courseTitle: purchase.courseId.courseTitle,
-        purchaseDate: purchase.createdAt
-        }));
-        I
-        res.json({success: true, enrolledStudents})
-        
-        
+    const enrolledStudents = purchases.map(purchase => ({
+      student: purchase.userId,
+      courseTitle: purchase.courseId.courseTitle,
+      purchaseDate: purchase.createdAt
+    }));
 
+    res.json({ success: true, enrolledStudents });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }

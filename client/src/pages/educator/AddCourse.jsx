@@ -1,11 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import uniqid from "uniqid";
 import { assets } from "../../assets/assets";
+import { AppContext } from "../../context/AppContext";
+import { toast } from "react-toastify";
+import axios from 'axios';
 
 const AddCourse = () => {
-  const quilRef = useRef(null);
+  const quillRef = useRef(null);
   const editorRef = useRef(null);
+
+  const { backendUrl, getToken } = useContext(AppContext);
 
   const [courseTitle, setCourseTitle] = useState("");
   const [coursePrice, setCoursePrice] = useState(0);
@@ -21,10 +26,11 @@ const AddCourse = () => {
     lectureUrl: "",
     isPreviewFree: false,
   });
+
   useEffect(() => {
-    //initiate quil only once
-    if (!quilRef.current && editorRef.current) {
-      quilRef.current = new Quill(editorRef.current, {
+    //initiate quill only once
+    if (!quillRef.current && editorRef.current) {
+      quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
       });
     }
@@ -56,7 +62,7 @@ const AddCourse = () => {
       );
     }
   };
-  
+
   const handleLecture = (action, chapterId, lectureIndex) => {
     if (action === "add") {
       setCurrentChapterId(chapterId);
@@ -64,46 +70,89 @@ const AddCourse = () => {
     } else if (action === "remove") {
       setChapters(
         chapters.map((chapter) => {
-          if (chapters.chapterId === chapterId) {
-            chapters.chapterContent.slice(lectureIndex, 1);
+          if (chapter.chapterId === chapterId) {
+            chapter.chapterContent.splice(lectureIndex, 1);
           }
-          return chapters;
+          return chapter;
         })
       );
     }
   };
 
-  const addLecture =()=>{
+  const addLecture = () => {
     setChapters(
-      chapters.map((chapter)=>{
-       
-        if(chapter.chapterId === currentChapterId){
+      chapters.map((chapter) => {
+        if (chapter.chapterId === currentChapterId) {
           const newLecture = {
             ...lectureDetails,
-            lectureOrder:chapter.chapterContent.length > 0 ? chapter.chapterContent.slice(-1)[0].lectureOrder + 1:1,
-            lectureId:uniqid()
-          }
+            lectureOrder:
+              chapter.chapterContent.length > 0
+                ? chapter.chapterContent.slice(-1)[0].lectureOrder + 1
+                : 1,
+            lectureId: uniqid(),
+          };
           chapter.chapterContent.push(newLecture);
         }
         return chapter;
       })
     );
-    setShowPopup(false)
+    setShowPopup(false);
     setLectureDetails({
-      lectureTitle:'',
-      lectureDuration:'',
-      lectureUrl:'',
-      isPreviewFree:false
+      lectureTitle: "",
+      lectureDuration: "",
+      lectureUrl: "",
+      isPreviewFree: false,
     });
+  };
 
-  }
-  const handleSubmit =async (e)=>{
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      if (!image) {
+        toast.error("thumbnail not selected");
+        return;
+      }
+
+      const courseData = {
+        courseTitle,
+        courseDescription: quillRef.current.root.innerHTML,
+        coursePrice: Number(coursePrice),
+        discount: Number(discount),
+        courseContent: chapters,
+      };
+      const formData = new FormData();
+      formData.append("courseData", JSON.stringify(courseData));
+      formData.append("image", image);
+
+      const token = await getToken();
+      const { data } = await axios.post(
+        backendUrl + `/api/educator/add-course`,
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setCourseTitle("");
+        setCoursePrice(0);
+        setDiscount(0);
+        setImage(null);
+        setChapters([]);
+        quillRef.current.root.innerHTML = "";
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
     <div className="h-screen flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
-      <form  onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-md w-full text=-gray-500">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-4 max-w-md w-full text-gray-500"
+      >
         <div className="flex flex-col gap-1">
           <p>CourseTitle</p>
           <input
@@ -139,10 +188,9 @@ const AddCourse = () => {
             <label htmlFor="thumbnailImage" className="flex items-center gap-3">
               <img
                 src={assets.file_upload_icon}
-                alt=""
+                alt="file upload icon"
                 className="p-3 bg-blue-500 rounded"
               />
-
               <input
                 onChange={(e) => setImage(e.target.files[0])}
                 accept="image/*"
@@ -151,7 +199,7 @@ const AddCourse = () => {
                 id="thumbnailImage"
               />
               <img
-                className="max-h-10 "
+                className="max-h-10"
                 src={image ? URL.createObjectURL(image) : ""}
                 alt=""
               />
@@ -174,64 +222,67 @@ const AddCourse = () => {
         </div>
 
         <div>
-          {chapters.map((chapters, chapterIndex) => (
-            <div
-              key={chapterIndex}
-              className="bg-whtite border rounded-lg mb-4"
-            >
+          {chapters.map((chapter, chapterIndex) => (
+            <div key={chapterIndex} className="bg-white border rounded-lg mb-4">
               <div className="flex justify-between items-center p-4 border-b">
                 <div className="flex items-center">
-                  <img onClick={()=>handleChapter('toggle',chapters.chapterId)}
+                  <img
+                    onClick={() => handleChapter("toggle", chapter.chapterId)}
                     src={assets.dropdown_icon}
                     width={14}
-                    alt=""
+                    alt="dropdown icon"
                     className={`mr-2 cursor-pointer transition-all ${
-                      chapters.collapsed && "-rotate-90"
+                      chapter.collapsed && "-rotate-90"
                     }`}
                   />
                   <span className="font-semibold">
-                    {chapterIndex + 1}
-                    {chapters.chapterTitle}
+                    {chapterIndex + 1}. {chapter.chapterTitle}
                   </span>
                 </div>
                 <span className="text-gray-500">
-                  {chapters.chapterContent.length}Lectures
+                  {chapter.chapterContent.length} Lectures
                 </span>
-                <img onClick={()=>handleChapter('remove',chapters.chapterId)}
+                <img
+                  onClick={() => handleChapter("remove", chapter.chapterId)}
                   src={assets.cross_icon}
-                  alt=""
+                  alt="cross icon"
                   className="cursor-pointer"
                 />
               </div>
-              {!chapters.collapsed && (
+              {!chapter.collapsed && (
                 <div className="p-4">
-                  {chapters.chapterContent.map((lecture, lectureIndex) => (
+                  {chapter.chapterContent.map((lecture, lectureIndex) => (
                     <div
                       key={lectureIndex}
-                      className="flex justify-between items-center md-2"
+                      className="flex justify-between items-center mb-2"
                     >
                       <span>
-                        {" "}
-                        {lectureIndex + 1}
-                        {lecture.lectureTitle} - {lecture.lectureDuration} mins
-                        -{" "}
+                        {lectureIndex + 1}. {lecture.lectureTitle} -{" "}
+                        {lecture.lectureDuration} mins -{" "}
                         <a
                           href={lecture.lectureUrl}
                           target="_blank"
+                          rel="noopener noreferrer"
                           className="text-blue-600"
                         >
                           Link
                         </a>{" "}
-                        -{lecture.isPreviewFree ? "free preview" : "paid"}
+                        - {lecture.isPreviewFree ? "free preview" : "paid"}
                       </span>
                       <img
                         src={assets.cross_icon}
-                        alt="" onClick={()=>handleLecture('remove',chapters.chapterId,lectureIndex)}
+                        alt="cross icon"
+                        onClick={() =>
+                          handleLecture("remove", chapter.chapterId, lectureIndex)
+                        }
                         className="cursor-pointer"
                       />
                     </div>
                   ))}
-                  <div className="inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2" onClick={()=>handleLecture('add', chapters.chapterId)}>
+                  <div
+                    className="inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2"
+                    onClick={() => handleLecture("add", chapter.chapterId)}
+                  >
                     + Add Lectures
                   </div>
                 </div>
@@ -299,7 +350,7 @@ const AddCourse = () => {
                 <input
                   type="checkbox"
                   className="mt-1 block scale-125"
-                  value={lectureDetails.isPreviewFree}
+                  checked={lectureDetails.isPreviewFree}
                   onChange={(e) =>
                     setLectureDetails({
                       ...lectureDetails,
@@ -309,14 +360,18 @@ const AddCourse = () => {
                 />
               </div>
 
-              <button className="w-full bg-blue-400 text-white px-4 py-2 rounded" onClick={addLecture}>
+              <button
+                className="w-full bg-blue-400 text-white px-4 py-2 rounded"
+                onClick={addLecture}
+              >
                 Add
               </button>
 
               <img
                 onClick={() => setShowPopup(false)}
                 src={assets.cross_icon}
-                className="absolute top-4 right-4 w-4 cursor-pionter "
+                alt="cross icon"
+                className="absolute top-4 right-4 w-4 cursor-pointer"
               />
             </div>
           </div>
