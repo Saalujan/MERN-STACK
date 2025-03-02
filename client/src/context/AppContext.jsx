@@ -37,16 +37,20 @@ export const AppContextProvider = (props) => {
 
   // Fetch UserData
   const fetchUserData = async () => {
+    if(user.publicMetadata.role === 'educator'){
+      setIsEducator(true)
+    }
     try {
       const token = await getToken();
       const { data } = await axios.get(backendUrl + '/api/user/data', {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (data.success) {
-        setUserData(data.user);
-        if (data.user.role === 'educator') {
-          setIsEducator(true);
-        }
+        setAllCourses(data.course)
+        // setUserData(data.user);
+        // if (data.user.role === 'educator') {
+        //   setIsEducator(true);
+        // }
       } else {
         toast.error(data.message);
       }
@@ -55,18 +59,7 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  // Call fetchAllCourses inside useEffect
-  useEffect(() => {
-    fetchAllCourses();
-    fetchUserEnrolledCourses();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      fetchUserData();
-      fetchUserEnrolledCourses();
-    }
-  }, [user]);
+ 
 
   // Function to calculate average rating of a course
   const calculateRating = (course) => {
@@ -96,6 +89,19 @@ export const AppContextProvider = (props) => {
       toast.error(error.message);
     }
   };
+
+   // Call fetchAllCourses inside useEffect
+   useEffect(() => {
+    fetchAllCourses();
+    // fetchUserEnrolledCourses();
+  },);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+      fetchUserEnrolledCourses();
+    }
+  }, [user]);
 
   const value = {
     currency,

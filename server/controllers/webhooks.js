@@ -33,7 +33,7 @@ export const clerkWebHooks = async (req, res) => {
 
       case "user.updated": {
         const userData = {
-          email: data.email_addresses[0].email_address,
+          email: data.email_address[0].email_address,
           name: data.first_name + " " + data.last_name,
           imageUrl: data.image_url,
         };
@@ -47,10 +47,11 @@ export const clerkWebHooks = async (req, res) => {
         break;
       }
       default:
-        res.status(400).json({ error: "Unhandled event type" });
+        break
+        // res.status(400).json({ error: "Unhandled event type" });
     }
   } catch (error) {
-    res.status(500).json({ error: "Webhook handler failed" });
+    res.json({success:false, message:error.message});
   }
 };
 

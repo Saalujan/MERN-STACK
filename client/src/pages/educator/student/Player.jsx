@@ -72,7 +72,7 @@ const Player = () => {
     try {
       const token = await getToken();
       const { data } = await axios.post(
-        backendUrl + "/api/user/update-course-progress",
+        backendUrl + "/api/user/get-course-progress",
         { courseId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -139,7 +139,7 @@ const Player = () => {
                       </p>
                     </div>
                     <p className="text-sm md:text-default">
-                      {/* {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)} */}
+                      {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
                     </p>
                   </div>
                   <div

@@ -25,7 +25,7 @@ const CourseDetails = () => {
     calculatecourseDuration,
     currency,
     backendUrl,
-    userData,
+    userData,getToken
   } = useContext(AppContext);
 
   const fetchCourseData = async () => {
@@ -75,6 +75,7 @@ const CourseDetails = () => {
   useEffect(() => {
     fetchCourseData();
   }, []);
+
   useEffect(() => {
     if (userData && courseData) {
       setIsAlreadyEnrolled(userData.enrollCourse.includes(courseData._id));
@@ -134,7 +135,7 @@ const CourseDetails = () => {
           <p className="text-sm">
             Course By{" "}
             <span className="text-blue-600 underline">
-              {GreatStack.educator.name}
+              {courseData.educator.name}
             </span>
           </p>
 
@@ -163,7 +164,7 @@ const CourseDetails = () => {
                       </p>
                     </div>
                     <p className="text-sm md:text-default">
-                      {/* {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)} */}
+                      {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
                     </p>
                   </div>
                   <div
@@ -283,7 +284,7 @@ const CourseDetails = () => {
                   alt="clock icon"
                   className="w-4"
                 />
-                {/* <p>{calculatecourseDuration(courseData)}</p> */}
+                <p>{calculatecourseDuration(courseData)}</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-2">
@@ -292,7 +293,7 @@ const CourseDetails = () => {
                   alt="clock icon"
                   className="w-4"
                 />
-                {/* <p>{calculateNoOfLectures(courseData)} lessons</p> */}
+                <p>{calculateNoOfLectures(courseData)} lessons</p>
               </div>
             </div>
             <button onClick={enrollCourse}  className="md:mt-6 mt-4 w-full py-3 round bg-blue-600 text-white font-medium">

@@ -73,7 +73,7 @@ if(userData){
                 </td>
                 
                 <td className="px-4 py-3 max-sm:hidden">sss</td>
-                {/* <td>{calculateCourseDuration(course)}</td> */}
+                <td>{calculateCourseDuration(course)}</td>
                 <td className="px-4 py-3 max-sm:hidden">
                   {progressArray[index] && `${progressArray[index].lectureCompleted} / ${progressArray[index].totalLectures}`} <span> Lectures</span>
                 </td>

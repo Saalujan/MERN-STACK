@@ -5,12 +5,14 @@ const Loading = () => {
 
   const { path } = useParams()
   const navigate = useNavigate();
+
+
   useEffect(()=>{
   if(path){
   const timer = setTimeout(()=>{
   navigate(`/${path}`)
-  }, 5999)
-  return ()=> c1earTimeout(timer);
+  }, 5000)
+  return ()=> clearTimeout(timer);
   }
 },[])
   
