@@ -126,7 +126,7 @@ const AddCourse = () => {
 
       const token = await getToken();
       const { data } = await axios.post(
-        backendUrl + `/api/educator/add-course`,
+        `${backendUrl}/api/educator/add-course`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

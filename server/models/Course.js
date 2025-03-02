@@ -5,7 +5,7 @@ const lectureSchema = new mongoose.Schema({
     lectureTitle:{type:String,required:true},
     lectureDuration:{type:Number,required:true},
     lectureUrl:{type:String,required:true},
-    isPreviewfree:{type:Boolean,required:true},
+    isPreviewfree:{type:Boolean},
     lectureOrder:{type:Number,required:true}
 },{_id:false});
 
@@ -14,7 +14,7 @@ const chapterSchema = new mongoose.Schema({
     chapterId:{type:String, required:true},
     chapterOrder:{type:Number, required:true},
     // courseTitle:{type:String, required:true},
-    courseContent:[lectureSchema]
+    chapterContent:[lectureSchema]
 },{_id:false})
 
  const courseSchema = new mongoose.Schema({

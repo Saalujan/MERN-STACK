@@ -7,6 +7,7 @@ import { AppContext } from '../../context/AppContext'
 const CourseSection = () => {
 
   const {allCourses} = useContext(AppContext)
+ 
 
   
   return (

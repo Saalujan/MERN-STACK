@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
 import Loading from '../../components/student/Loading'
 import axios from 'axios'
+import { toast } from 'react-toastify';
 
 const MyCourse = () => {
 
@@ -9,21 +10,24 @@ const {currency,backendUrl,getToken,isEducator} =useContext(AppContext)
 
 const [courses,setCourses] = useState(null)
 
-const fetchEducatorCourses =async ()=>{
+const fetchEducatorCourses =async ()=> {
   try{
     const token = await getToken()
 
     const { data } = await axios.get(backendUrl + '/api/educator/courses',
-    {header: { Authorization: `Bearer ${token}` }})
+    {headers: { Authorization: `Bearer ${token}` }})
     
-    data.success && setCourses(data.courses)
-    
+    if (data.success) {
+      setCourses(data.courses);
+    } else {
+      toast.error(data.message);
+    }
     
   }catch(error){
 toast.error(error.message)
   }
 }
-useEffect(()=>{
+useEffect(()=> {
   if(isEducator){
     fetchEducatorCourses()
   }

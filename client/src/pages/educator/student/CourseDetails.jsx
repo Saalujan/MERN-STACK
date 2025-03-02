@@ -7,6 +7,7 @@ import humanizeDuration from "humanize-duration";
 import Footer from "../../../components/student/Footer";
 import YouTube from "react-youtube";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -76,11 +77,11 @@ const CourseDetails = () => {
     fetchCourseData();
   }, []);
 
-  useEffect(() => {
-    if (userData && courseData) {
-      setIsAlreadyEnrolled(userData.enrollCourse.includes(courseData._id));
-    }
-  }, [userData, courseData]);
+  // useEffect(() => {
+  //   if (userData && courseData) {
+  //     setIsAlreadyEnrolled(userData.enrollCourse.includes(courseData._id));
+  //   }
+  // }, [userData, courseData]);
 
   const toggleSection = (index) => {
     setOpenSection((prev) => ({
@@ -163,16 +164,16 @@ const CourseDetails = () => {
                         {chapter.chapterTitle}
                       </p>
                     </div>
-                    <p className="text-sm md:text-default">
+                    {/* <p className="text-sm md:text-default">
                       {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
-                    </p>
+                    </p> */}
                   </div>
                   <div
                     className={`overflow-hidden transition-all duration-500 ${
                       openSection[index] ? "max-h-96" : "max-h-0"
                     }`}
                   >
-                    <ul className="list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border border-gray-300">
+                     <ul className="list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border border-gray-300"> 
                       {chapter.chapterContent.map((lecture, i) => (
                         <li
                           key={i}
@@ -210,7 +211,7 @@ const CourseDetails = () => {
                           </div>
                         </li>
                       ))}
-                    </ul>
+                    </ul> 
                   </div>
                 </div>
               ))}
@@ -284,7 +285,7 @@ const CourseDetails = () => {
                   alt="clock icon"
                   className="w-4"
                 />
-                <p>{calculatecourseDuration(courseData)}</p>
+                {/* <p>{calculatecourseDuration(courseData)}</p> */}
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-2">
@@ -293,7 +294,7 @@ const CourseDetails = () => {
                   alt="clock icon"
                   className="w-4"
                 />
-                <p>{calculateNoOfLectures(courseData)} lessons</p>
+                {/* <p>{calculateNoOfLectures(courseData)} lessons</p> */}
               </div>
             </div>
             <button onClick={enrollCourse}  className="md:mt-6 mt-4 w-full py-3 round bg-blue-600 text-white font-medium">
