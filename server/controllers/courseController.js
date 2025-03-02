@@ -5,7 +5,7 @@ import Course from "../models/Course.js";
 export const getAllCourse = async (req, res) => {
   try {
     const courses = await Course.find({ isPublished: true })
-      .select(["-courseContent", "-enrolledStudents"])
+      .select(['-courseContent', '-enrolledStudents'])
       .populate({ path: "educator" });
     res.json({ success: true, courses });
   } catch (error) {
@@ -19,8 +19,8 @@ export const getCourseId = async (req, res) => {
   try {
     const courseData = await Course.findById(id).populate({ path: "educator" });
     // Remove lectureUrl if isPreviewFree is false
-    courseData.courseContent.forEach((chapter) => {
-      chapter.chapterContent.forEach((lecture) => {
+    courseData.courseContent.forEach(chapter => {
+      chapter.chapterContent.forEach(lecture => {
         if (!lecture.isPreviewFree) {
           lecture.lectureUrl = "";
         }

@@ -94,7 +94,7 @@ export const stripewebhooks = async (request, response) => {
 
       await userData.save();
 
-      purchaseData.status = "completed";
+      purchaseData.status = 'completed';
       await purchaseData.save();
 
       break;

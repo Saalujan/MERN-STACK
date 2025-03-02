@@ -15,7 +15,7 @@ export const updateRoleToEducator = async (req, res) => {
     });
     res.json({ success: true, message: "You can publish a course now" });
   } catch (error) {
-    res.json({ success: false, message: "error" });
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -31,7 +31,6 @@ export const addCourse = async (req, res) => {
     }
     const parseCoursedata = await JSON.parse(courseData);
     parseCoursedata.educator = educatorId;
-    console.log(parseCoursedata.courseContent[0])
     const newCourse = await Course.create(parseCoursedata);
     const imageUpload = await cloudinary.uploader.upload(imagefile.path);
     newCourse.courseThumbnail = imageUpload.secure_url;
@@ -39,20 +38,18 @@ export const addCourse = async (req, res) => {
 
     res.json({ success: true, message: "course added" });
   } catch (error) {
-    res.json({ success: false, message:error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
 //get educator courses
 export const getEducatorCourses = async (req, res) => {
-  
   try {
-    
     const educator = req.auth.userId;
     const courses = await Course.find({ educator });
     res.json({ success: true, courses });
   } catch (error) {
-    res.json({ success: false, message: "error.message" });
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -80,7 +77,7 @@ export const educatorDashboardData = async (req, res) => {
     for (const course of courses) {
       const students = await User.find(
         {
-          _id: { $in: course.enrolledstudents },
+          _id: { $in: course.enrolledStudents },
         },
         "name imageUrl"
       );
@@ -117,7 +114,9 @@ export const getEnrolledStudentsData = async (req, res) => {
     })
       .populate("userId", "name imageUrl")
       .populate("courseId", "courseTitle");
+      
 
+      
     const enrolledStudents = purchases.map(purchase => ({
       student: purchase.userId,
       courseTitle: purchase.courseId.courseTitle,
