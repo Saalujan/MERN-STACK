@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { dummyStudentEnrolled } from '../../assets/assets';
 import Loading from '../../components/student/Loading';
 import { AppContext } from '../../context/AppContext';
 import { toast } from 'react-toastify';
@@ -12,9 +11,12 @@ const StudentEnrolled = () => {
   const fetchEnrolledStudents = async () => {
     try {
       const token = await getToken();
-      const { data } = await axios.get(backendUrl + '/api/educator/enrolled-students', {
+      const { data } = await axios.get(`${backendUrl}/api/educator/enrolled-students`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      //  `${backendUrl}/api/user/purchase`,
+      //   { courseId: courseData._id },
+      //   { headers: { Authorization: `Bearer ${token}` } }
       if (data.success) {
         setEnrolledStudents(data.enrolledStudents.reverse());
       } else {
@@ -46,11 +48,11 @@ const StudentEnrolled = () => {
           <tbody className="text-gray-700">
             {enrolledStudents.map((item, index) => (
               <tr key={index} className="border-b border-gray-500/20">
-                <td className="px-4 py-3 text-center hidden sm:table-cell">{index + 1}</td>
+                <td className="px-4 py-3 text-center">{index + 1}</td>
                 <td className='md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3'>
                   <img
                     src={item.student.imageUrl}
-                    alt=""
+                    alt="profile"
                     className="w-9 h-9 rounded-full"
                   />
                   <span className='truncate'>

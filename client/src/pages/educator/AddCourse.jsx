@@ -6,6 +6,8 @@ import { AppContext } from "../../context/AppContext";
 import { toast } from "react-toastify";
 import axios from 'axios';
 
+
+
 const AddCourse = () => {
   const quillRef = useRef(null);
   const editorRef = useRef(null);
@@ -28,7 +30,7 @@ const AddCourse = () => {
   });
 
   useEffect(() => {
-    //initiate quill only once
+    // initiate quill only once
     if (!quillRef.current && editorRef.current) {
       quillRef.current = new Quill(editorRef.current, {
         theme: "snow",
@@ -148,7 +150,9 @@ const AddCourse = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0">
+ 
+    <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-20 text-left">
+      <div className="max-w-xl z-10 text-gray-500 border border-gray-300 p-5 rounded-lg shadow-md bg-white">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 max-w-md w-full text-gray-500"
@@ -380,6 +384,14 @@ const AddCourse = () => {
           ADD
         </button>
       </form>
+    </div>
+    <div className="flex justify-center items-center h-80 bg-gray-100 p-4">
+  <img
+    src={assets.course_1_thumbnail} 
+    alt="add-course" 
+    className="w-full h-full object-cover rounded-lg  "
+  />
+</div>
     </div>
   );
 };

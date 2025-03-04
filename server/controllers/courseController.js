@@ -25,7 +25,7 @@ export const getCourseId = async (req, res) => {
     if (courseData.courseContent) {
       courseData.courseContent.forEach(chapter => {
         chapter.chapterContent.forEach(lecture => {
-          if (!lecture.isPreviewFree) {
+          if (!lecture.isPreviewfree) {
             lecture.lectureUrl = "";
           }
         });

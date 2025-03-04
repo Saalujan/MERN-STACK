@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth, useUser } from '@clerk/clerk-react';
 import axios from 'axios';
 import { toast } from "react-toastify";
+import humanizeDuration from "humanize-duration";
 
 export const AppContext = createContext();
 
@@ -97,6 +98,35 @@ export const AppContextProvider = (props) => {
     }
   };
 
+  // Function to calculate the number of lectures in a course
+  const calculateNoOfLectures = (course) => {
+    let totalLectures = 0;
+    course.courseContent.forEach((chapter) => {
+      totalLectures += chapter.chapterContent.length;
+    });
+    return totalLectures;
+  };
+
+  // Function to calculate the total duration of a course
+  const calculateCourseDuration = (course) => {
+    let totalDuration = 0;
+    course.courseContent.forEach((chapter) => {
+      chapter.chapterContent.forEach((lecture) => {
+        totalDuration += lecture.lectureDuration;
+      });
+    });
+    return humanizeDuration(totalDuration * 60 * 1000, { units: ["h", "m"] });
+  };
+
+  // Function to calculate the total duration of a chapter
+  const calculateChapterTime = (chapter) => {
+    let totalDuration = 0;
+    chapter.chapterContent.forEach((lecture) => {
+      totalDuration += lecture.lectureDuration;
+    });
+    return humanizeDuration(totalDuration * 60 * 1000, { units: ["h", "m"] });
+  };
+
   const value = {
     currency,
     allCourses,
@@ -110,7 +140,10 @@ export const AppContextProvider = (props) => {
     userData,
     setUserData,
     getToken,
-    fetchAllCourses
+    fetchAllCourses,
+    calculateNoOfLectures,
+    calculateCourseDuration,
+    calculateChapterTime
   };
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;

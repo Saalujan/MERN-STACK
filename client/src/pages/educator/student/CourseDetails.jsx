@@ -15,23 +15,27 @@ const CourseDetails = () => {
   const [courseData, setCourseData] = useState(null);
   const [openSection, setOpenSection] = useState({});
 
-  const [isAlreadyenrolled, setIsAlreadyEnrolled] = useState(false);
+  const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false);
   const [playerData, setPlayerData] = useState(null);
 
   const {
-    allCourses,
+allCourses,
+
     calculateRating,
     calculateNoOfLectures,
     calculateChapterTime,
-    calculatecourseDuration,
+    calculateCourseDuration,
     currency,
     backendUrl,
-    userData,getToken
+    userData,
+    getToken,
+    fetchUserEnrolledCourses,
+    enrolledCourses
   } = useContext(AppContext);
 
   const fetchCourseData = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/course/" + id);
+      const { data } = await axios.get(`${backendUrl}/api/course/${id}`);
       if (data.success) {
         setCourseData(data.courseData);
       } else {
@@ -40,7 +44,11 @@ const CourseDetails = () => {
     } catch (error) {
       toast.error(error.message);
     }
-    // const findCourse = allCourses.find(
+// const findCourse = allCourses.find(
+    //   (course) => String(course._id) === String(id)
+    // );
+    // setCourseData(findCourse);
+// const findCourse = allCourses.find(
     //   (course) => String(course._id) === String(id)
     // );
     // setCourseData(findCourse);
@@ -52,13 +60,13 @@ const CourseDetails = () => {
         return toast.warn("Login to Enroll");
       }
 
-      if (isAlreadyenrolled) {
+      if (isAlreadyEnrolled) {
         return toast.warn("Already Enrolled");
       }
 
       const token = await getToken();
       const { data } = await axios.post(
-        backendUrl + "/api/user/purchase",
+        `${backendUrl}/api/user/purchase`,
         { courseId: courseData._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -77,11 +85,17 @@ const CourseDetails = () => {
     fetchCourseData();
   }, []);
 
-  // useEffect(() => {
-  //   if (userData && courseData) {
-  //     setIsAlreadyEnrolled(userData.enrollCourse.includes(courseData._id));
-  //   }
-  // }, [userData, courseData]);
+  useEffect(() => {
+    if (userData && courseData) {
+      setIsAlreadyEnrolled(userData.enrolledCourses.includes(courseData._id));
+    }
+  }, [userData, courseData]);
+
+  useEffect(() => {
+    if (enrolledCourses.length > 0) {
+      setIsAlreadyEnrolled(enrolledCourses.some(course => course._id === id));
+    }
+  }, [enrolledCourses]);
 
   const toggleSection = (index) => {
     setOpenSection((prev) => ({
@@ -142,76 +156,70 @@ const CourseDetails = () => {
 
           <div className="pt-8 text-gray-800">
             <h2 className="text-xl font-semibold">Course Structure</h2>
-            <div className="pt-5">
+            <div className="pt-5 space-y-3">
               {courseData.courseContent?.map((chapter, index) => (
-                <div
-                  key={index}
-                  className="border border-gray-300 bg-white md:mt-2 rounded"
-                >
+                <div key={index} className="border border-gray-300 bg-white rounded-md overflow-hidden">
+                  {/* Chapter Header */}
                   <div
-                    className="flex items-center justify-between p-3 cursor-pointer select-none"
+                    className="flex items-center justify-between p-4 cursor-pointer select-none hover:bg-gray-100 transition"
                     onClick={() => toggleSection(index)}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <img
-                        className={`transform transition-transform ${
+                        className={`w-4 h-4 transform transition-transform ${
                           openSection[index] ? "rotate-180" : ""
                         }`}
                         src={assets.down_arrow_icon}
                         alt="arrow_icon"
                       />
-                      <p className="font-medium md:text-base text-sm">
-                        {chapter.chapterTitle}
-                      </p>
+                      <p className="font-medium text-sm md:text-base">{chapter.chapterTitle}</p>
                     </div>
-                    {/* <p className="text-sm md:text-default">
+                    <p className="text-xs md:text-sm text-gray-600">
                       {chapter.chapterContent.length} lectures - {calculateChapterTime(chapter)}
-                    </p> */}
+                    </p>
                   </div>
+
+                  {/* Chapter Content (Collapsible) */}
                   <div
                     className={`overflow-hidden transition-all duration-500 ${
                       openSection[index] ? "max-h-96" : "max-h-0"
                     }`}
                   >
-                     <ul className="list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border border-gray-300"> 
+                    <ul className="list-none border-t border-gray-300 bg-gray-50">
                       {chapter.chapterContent.map((lecture, i) => (
                         <li
                           key={i}
-                          className="flex items-center justify-between p-3 cursor-pointer select-none"
+                          className="flex items-center justify-between px-5 py-3 border-b border-gray-200 hover:bg-gray-100 transition"
                         >
-                          <img
-                            src={assets.play_icon}
-                            alt="play_icon"
-                            className="w-4 h-4 mt-1"
-                          />
-                          <div>
-                            <p>{lecture.lectureTitle}</p>
-                            <div>
-                              {lecture.isPreviewFree && (
-                                <p
-                                  onClick={() =>
-                                    setPlayerData({
-                                      videoId: lecture.lectureUrl
-                                        .split("/")
-                                        .pop(),
-                                    })
-                                  }
-                                  className="text-blue-500 cursor-pointer"
-                                >
-                                  Preview
-                                </p>
-                              )}
-                              <p>
-                                {humanizeDuration(
-                                  lecture.lectureDuration * 60 * 1000,
-                                  { units: ["h", "m"] }
-                                )}
+                          {/* Play Icon */}
+                          <div className="flex items-center gap-3">
+                            <img src={assets.play_icon} alt="play_icon" className="w-5 h-5" />
+                            <p className="text-sm">{lecture.lectureTitle}</p>
+                          </div>
+
+                          {/* Preview & Duration */}
+                          <div className="text-xs text-gray-600 flex gap-4">
+                            {lecture.isPreviewFree && lecture.lectureUrl && (
+                              <p
+                                onClick={() =>
+                                  setPlayerData({
+                                    videoId: lecture.lectureUrl.split("/").pop(),
+                                  })
+                                }
+                                className="text-blue-500 cursor-pointer"
+                              >
+                                Preview
                               </p>
-                            </div>
+                            )}
+                            <p>
+                              {humanizeDuration(lecture.lectureDuration * 60 * 1000, {
+                                units: ["h", "m"],
+                              })}
+                            </p>
                           </div>
                         </li>
                       ))}
-                    </ul> 
+                    </ul>
                   </div>
                 </div>
               ))}
@@ -261,7 +269,7 @@ const CourseDetails = () => {
               <p className="text-gary-800 md:text-4xl text-2xl font-semibold">
                 {currency}{" "}
                 {(
-                  courseData.coursePrice -
+                  courseData.coursePrice - 
                   (courseData.discount * courseData.coursePrice) / 100
                 ).toFixed(2)}
               </p>
@@ -285,7 +293,7 @@ const CourseDetails = () => {
                   alt="clock icon"
                   className="w-4"
                 />
-                {/* <p>{calculatecourseDuration(courseData)}</p> */}
+                <p>{calculateCourseDuration(courseData)}</p>
               </div>
               <div className="h-4 w-px bg-gray-500/40"></div>
               <div className="flex items-center gap-2">
@@ -294,19 +302,19 @@ const CourseDetails = () => {
                   alt="clock icon"
                   className="w-4"
                 />
-                {/* <p>{calculateNoOfLectures(courseData)} lessons</p> */}
+                <p>{calculateNoOfLectures(courseData)} lessons</p>
               </div>
             </div>
-            <button onClick={enrollCourse}  className="md:mt-6 mt-4 w-full py-3 round bg-blue-600 text-white font-medium">
-              {isAlreadyenrolled ? "Already Enrolled" : "Enroll Now"}
+            <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 round bg-blue-600 text-white font-medium">
+              {isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
             </button>
 
             <div>
-              <p>whats in the course</p>
+              <p>What's in the course</p>
               <ul className="ml-4 pt-2 text-sm md:text-default list-disc text-gray-500">
                 <li> Lifetime access to the course</li>
-                <li> Lifetime access to the course</li>
-                <li> Lifetime access to the course</li>
+                <li> Step-by-step, hands-on project guidance</li>
+                <li> Downloadable resources and source code</li>
               </ul>
             </div>
           </div>

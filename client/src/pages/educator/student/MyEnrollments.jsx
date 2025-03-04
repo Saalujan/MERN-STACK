@@ -3,6 +3,7 @@ import { AppContext } from "../../../context/AppContext";
 import { Line } from 'rc-progress';
 import Footer from "../../../components/student/Footer";
 import { toast } from "react-toastify";
+import axios from 'axios';
 
 const MyEnrollments = () => {
   const { enrolledCourses, calculateCourseDuration, navigate, userData, fetchUserEnrolledCourses, backendUrl, getToken, calculateNoOfLectures } = useContext(AppContext);
@@ -17,6 +18,7 @@ const MyEnrollments = () => {
           const { data } = await axios.post(`${backendUrl}/api/user/get-course-progress`, { courseId: course._id }, {
             headers: { Authorization: `Bearer ${token}` }
           });
+          
           let totalLectures = calculateNoOfLectures(course);
           const lectureCompleted = data.progressData ? data.progressData.lectureCompleted.length : 0;
           return { totalLectures, lectureCompleted };
@@ -73,7 +75,7 @@ const MyEnrollments = () => {
                 </td>
                 <td className="px-4 py-3 max-sm:text-right">
                   <button className="px-3 sm:px-5 py-1.5 sm:py-2 bg-blue-600 max-sm:text-xs text-white"
-                    onClick={() => navigate('player/' + course._id)}
+                    onClick={() => navigate('/player/' + course._id)}
                   >
                     {progressArray[index] && (progressArray[index].lectureCompleted / progressArray[index].totalLectures === 1 ? 'Completed' : 'On Going')}
                   </button>
