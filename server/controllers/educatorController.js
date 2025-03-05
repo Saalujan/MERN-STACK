@@ -29,7 +29,7 @@ export const addCourse = async (req, res) => {
     if (!imagefile) {
       return res.json({ success: false, message: "thumbnail not attached" });
     }
-    const parseCoursedata = await JSON.parse(courseData);
+    const parseCoursedata = JSON.parse(courseData);
     parseCoursedata.educator = educatorId;
     const newCourse = await Course.create(parseCoursedata);
     const imageUpload = await cloudinary.uploader.upload(imagefile.path);
@@ -112,9 +112,7 @@ export const getEnrolledStudentsData = async (req, res) => {
       courseId: { $in: courseIds },
       status: "completed",
     }).populate("userId", "name imageUrl").populate("courseId", "courseTitle");
-      
 
-      
     const enrolledStudents = purchases.map(purchase => ({
       student: purchase.userId,
       courseTitle: purchase.courseId.courseTitle,

@@ -59,7 +59,6 @@ export const AppContextProvider = (props) => {
   // Call fetchAllCourses inside useEffect
   useEffect(() => {
     fetchAllCourses();
-    fetchUserEnrolledCourses();
   }, []);
 
   useEffect(() => {

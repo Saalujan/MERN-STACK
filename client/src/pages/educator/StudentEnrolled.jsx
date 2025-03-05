@@ -14,9 +14,7 @@ const StudentEnrolled = () => {
       const { data } = await axios.get(`${backendUrl}/api/educator/enrolled-students`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      //  `${backendUrl}/api/user/purchase`,
-      //   { courseId: courseData._id },
-      //   { headers: { Authorization: `Bearer ${token}` } }
+     
       if (data.success) {
         setEnrolledStudents(data.enrolledStudents.reverse());
       } else {
@@ -46,23 +44,31 @@ const StudentEnrolled = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {enrolledStudents.map((item, index) => (
-              <tr key={index} className="border-b border-gray-500/20">
-                <td className="px-4 py-3 text-center">{index + 1}</td>
-                <td className='md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3'>
-                  <img
-                    src={item.student.imageUrl}
-                    alt="profile"
-                    className="w-9 h-9 rounded-full"
-                  />
-                  <span className='truncate'>
-                    {item.student.name}
-                  </span>
+            {enrolledStudents.length > 0 ? (
+              enrolledStudents.map((item, index) => (
+                <tr key={index} className="border-b border-gray-500/20">
+                  <td className="px-4 py-3 text-center">{index + 1}</td>
+                  <td className='md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3'>
+                    <img
+                      src={item.student.imageUrl}
+                      alt="profile"
+                      className="w-9 h-9 rounded-full"
+                    />
+                    <span className='truncate'>
+                      {item.student.name}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 truncate">{item.courseTitle}</td>
+                  <td className="px-4 py-3 truncate">{new Date(item.purchaseDate).toLocaleDateString()}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="px-4 py-3 text-center text-gray-500">
+                  No enrolled students found.
                 </td>
-                <td className="px-4 py-3 truncate">{item.courseTitle}</td>
-                <td className="px-4 py-3 truncate">{new Date(item.purchaseDate).toLocaleDateString()}</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

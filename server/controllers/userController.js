@@ -22,8 +22,25 @@ export const getUserData = async (req, res) => {
 export const userEnrolledCourses = async (req, res) => {
   try {
     const userId = req.auth.userId;
-    const userData = await User.findById(userId).populate("enrolledCourses");
-    res.json({ success: true, enrolledCourses: userData.enrolledCourses });
+    const userData = await User.findById(userId)
+      .populate({
+        path: "enrolledCourses",
+        populate: {
+          path: "educator", // Populate educator details from User model
+          select: "name email imageUrl", // Select specific fields for educator
+        },
+      });
+    
+    if (!userData) {
+      return res.json({ success: false, message: "User Not Found" });
+    }
+
+    // Ensure enrolledCourses is populated
+    const enrolledCourses = await Course.find({
+      _id: { $in: userData.enrolledCourses }
+    }).populate("educator", "name email imageUrl");
+
+    res.json({ success: true, enrolledCourses });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
@@ -51,6 +68,10 @@ export const purchaseCourse = async (req, res) => {
       .toFixed(2),
     };
     const newPurchase = await Purchase.create(purchaseData);
+
+    // Add course to user's enrolled courses
+    userData.enrolledCourses.push(courseData._id);
+    await userData.save();
 
     //stripe gateway initialize
     const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);

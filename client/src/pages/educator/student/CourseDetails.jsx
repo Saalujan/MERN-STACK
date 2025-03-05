@@ -20,7 +20,6 @@ const CourseDetails = () => {
 
   const {
 allCourses,
-
     calculateRating,
     calculateNoOfLectures,
     calculateChapterTime,
@@ -83,11 +82,13 @@ allCourses,
 
   useEffect(() => {
     fetchCourseData();
-  }, []);
+    fetchUserEnrolledCourses()
+  }, [allCourses]);
 
   useEffect(() => {
     if (userData && courseData) {
       setIsAlreadyEnrolled(userData.enrolledCourses.includes(courseData._id));
+    
     }
   }, [userData, courseData]);
 
