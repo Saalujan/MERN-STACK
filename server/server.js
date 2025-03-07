@@ -24,6 +24,8 @@ app.use((req, res, next) => {
   if (req.originalUrl === '/stripe') {
     console.log(req.originalUrl ,"aaaa");
     next();
+  }else{
+    next();
   }
 });
 
