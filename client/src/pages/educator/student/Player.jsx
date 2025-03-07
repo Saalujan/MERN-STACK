@@ -27,6 +27,9 @@ const Player = () => {
   const [initialRating, setInitialRating] = useState(null);
 
   const getCourseData = () => {
+    if (!enrolledCourses || enrolledCourses.length === 0) {
+      return;
+    }
     enrolledCourses.map((course) => {
       if (course._id === courseId) {
         setCourseData(course);
@@ -48,6 +51,7 @@ const Player = () => {
   useEffect(() => {
     if (enrolledCourses.length > 0) {
       getCourseData();
+      getCourseProgress(); // Fetch course progress after getting course data
     }
   }, [enrolledCourses]);
 

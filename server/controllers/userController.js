@@ -10,11 +10,11 @@ export const getUserData = async (req, res) => {
     const userId = req.auth.userId;
     const user = await User.findById(userId);
     if (!user) {
-      return res.json({ success: false, message: "User Not Found" });
+      return res.status(404).json({ success: false, message: "User Not Found" });
     }
     res.json({ success: true, user });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -32,7 +32,7 @@ export const userEnrolledCourses = async (req, res) => {
       });
     
     if (!userData) {
-      return res.json({ success: false, message: "User Not Found" });
+      return res.status(404).json({ success: false, message: "User Not Found" });
     }
 
     // Ensure enrolledCourses is populated
@@ -42,7 +42,7 @@ export const userEnrolledCourses = async (req, res) => {
 
     res.json({ success: true, enrolledCourses });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -56,7 +56,7 @@ export const purchaseCourse = async (req, res) => {
     const courseData = await Course.findById(courseId);
 
     if (!userData || !courseData) {
-      return res.json({ success: false, message: "Data Not Found" });
+      return res.status(404).json({ success: false, message: "Data Not Found" });
     }
 
     const purchaseData = {
@@ -103,7 +103,7 @@ export const purchaseCourse = async (req, res) => {
 
     res.json({ success: true, session_url: session.url });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -124,13 +124,15 @@ export const updateUserCourseProgress = async (req, res) => {
       await CourseProgress.create({
         userId,
         courseId,
+        completed:true,
         lectureCompleted: [lectureId],
       });
     }
+  
 
     res.json({ success: true, message: 'Progress Updated' });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -142,7 +144,7 @@ export const getUserCourseProgress = async (req, res) => {
     const progressData = await CourseProgress.findOne({ userId, courseId });
     res.json({ success: true, progressData });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -174,6 +176,6 @@ export const addUserRating = async (req, res) => {
     await course.save();
     res.json({ success: true, message: 'Rating added successfully' });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };

@@ -20,7 +20,6 @@ export const getCourseId = async (req, res) => {
     if (!courseData) {
       return res.json({ success: false, message: "Course not found" });
     }
-    console.log(courseData.courseContent)
     // // Remove lectureUrl if isPreviewFree is false
     if (courseData.courseContent) {
       courseData.courseContent.forEach(chapter => {

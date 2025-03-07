@@ -47,11 +47,7 @@ allCourses,
     //   (course) => String(course._id) === String(id)
     // );
     // setCourseData(findCourse);
-// const findCourse = allCourses.find(
-    //   (course) => String(course._id) === String(id)
-    // );
-    // setCourseData(findCourse);
-  };
+  }
 
   const enrollCourse = async () => {
     try {
@@ -62,7 +58,6 @@ allCourses,
       if (isAlreadyEnrolled) {
         return toast.warn("Already Enrolled");
       }
-
       const token = await getToken();
       const { data } = await axios.post(
         `${backendUrl}/api/user/purchase`,
@@ -88,8 +83,7 @@ allCourses,
   useEffect(() => {
     if (userData && courseData) {
       setIsAlreadyEnrolled(userData.enrolledCourses.includes(courseData._id));
-    
-    }
+        }
   }, [userData, courseData]);
 
   useEffect(() => {

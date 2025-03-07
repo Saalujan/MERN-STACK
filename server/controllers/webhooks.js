@@ -47,16 +47,17 @@ export const clerkWebHooks = async (req, res) => {
         break;
       }
       default:
-        break
-        // res.status(400).json({ error: "Unhandled event type" });
+        break;
+      // res.status(400).json({ error: "Unhandled event type" });
     }
   } catch (error) {
-    res.json({success:false, message:error.message});
+    res.json({ success: false, message: error.message });
   }
 };
 
 const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const stripewebhooks = async (request, response) => {
+  console.log("stripewebhooks");
   const sig = request.headers["stripe-signature"];
 
   let event;
@@ -90,12 +91,12 @@ export const stripewebhooks = async (request, response) => {
       courseData.enrolledStudents.push(userData);
 
       await courseData.save();
-
+      console.log(courseData, "courseData");
       userData.enrolledCourses.push(courseData._id);
 
       await userData.save();
 
-      purchaseData.status = 'completed';
+      purchaseData.status = "completed";
       await purchaseData.save();
 
       break;

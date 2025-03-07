@@ -16,7 +16,7 @@ const StudentEnrolled = () => {
       });
      
       if (data.success) {
-        setEnrolledStudents(data.enrolledStudents.reverse());
+        setEnrolledStudents(data.enrolledStudents.length > 0 ? data.enrolledStudents.reverse() : []);
       } else {
         toast.error(data.message);
       }

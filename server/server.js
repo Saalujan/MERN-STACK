@@ -28,8 +28,9 @@ await connectCloudinary()
 
 // Root Route
 app.get("/", (req, res) => {
-  res.send("🎉 MERN Backend is Running...");
+  res.send("🎉v1 MERN Backend is Running...");
 });
+
 app.post('/clerk',express.json(), clerkWebHooks)
 app.use('/api/educator',express.json(), educateRouter)
 app.use('/api/course',express.json(), courseRouter)
