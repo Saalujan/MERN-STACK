@@ -7,7 +7,9 @@ import Course from "../models/Course.js";
 //get all data
 export const getUserData = async (req, res) => {
   try {
+
     const userId = req.auth.userId;
+    console.log("user loggon")
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, message: "User Not Found" });
