@@ -19,7 +19,13 @@ const app = express();
 
 app.use(cors());
 app.use(clerkMiddleware())
-
+app.use((req, res, next) => {
+  console.log(req.originalUrl);
+  if (req.originalUrl === '/stripe') {
+    console.log(req.originalUrl ,"aaaa");
+    next();
+  }
+});
 
 
 //connect to datbase
