@@ -1,4 +1,4 @@
-import logo from './logo.svg'
+import logo from './PLA_Logo_5.png'
 import logo_dark from './logo_dark.svg'
 import search_icon from './search_icon.svg'
 import cross_icon from './cross_icon.svg'
@@ -13,6 +13,8 @@ import course_1_thumbnail from './course_1.png'
 import course_2_thumbnail from './course_2.png'
 import course_3_thumbnail from './course_3.png'
 import course_4_thumbnail from './course_4.png'
+import AboutUs from './study.jpg'
+
 import star from './rating_star.svg'
 import star_blank from './star_dull_icon.svg'
 import profile_img_1 from './profile_img_1.png'
@@ -88,7 +90,8 @@ export const assets = {
     profile_img3,
     play_icon,
     blue_tick_icon,
-    lesson_icon
+    lesson_icon,
+    AboutUs
 }
 
 export const dummyEducatorData = {

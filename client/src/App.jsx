@@ -14,7 +14,10 @@ import StudentEnrolled from "./pages/educator/StudentEnrolled";
 import MyCourse from "./pages/educator/MyCourse";
 import Navbar from './components/student/Navbar';
 import 'quill/dist/quill.snow.css';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify'
+import AboutUs from "./components/student/aboutUs";
+import ContactUs from "./components/student/ContactUs";
+import PolicyPrivacy from "./components/student/PolicyPrivacy";
 
 const App = () => {
   const isEducatorRoute = useMatch('/educator/*');
@@ -24,6 +27,8 @@ const App = () => {
       {!isEducatorRoute && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
+    
+      
         <Route path="/course-list" element={<CourseList />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/course-list/:input" element={<CourseList />} />
@@ -38,6 +43,9 @@ const App = () => {
           <Route path="my-courses" element={<MyCourse />} />
           <Route path="student-enrolled" element={<StudentEnrolled />} />
         </Route>
+        <Route path="/about" element={<AboutUs />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/policy" element={<PolicyPrivacy/>} />
       </Routes>
     </div>
   );

@@ -151,80 +151,82 @@ const AddCourse = () => {
 
   return (
  
-    <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-20 text-left">
-      <div className="max-w-xl z-10 text-gray-500 border border-gray-300 p-5 rounded-lg shadow-md bg-white">
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-4 max-w-md w-full text-gray-500"
-      >
-        <div className="flex flex-col gap-1">
-          <p>CourseTitle</p>
+    <div className="flex md:flex-row flex-col-reverse gap-10 relative items-start justify-between md:px-36 px-8 md:pt-20 pt-10">
+    {/* Form Section */}
+    <div className="max-w-xl w-full text-gray-700 border border-gray-300 p-6 rounded-lg shadow-md bg-white">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        {/* Course Title */}
+        <div>
+          <label className="font-medium">Course Title</label>
           <input
-            onChange={(e) => setCourseTitle(e.target.value)}
-            value={courseTitle}
             type="text"
-            placeholder="Type here "
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500"
+            value={courseTitle}
+            onChange={(e) => setCourseTitle(e.target.value)}
+            placeholder="Type here"
+            className="w-full outline-none py-2 px-3 rounded border border-gray-400 mt-1"
             required
           />
         </div>
-
-        <div className="flex flex-col gap-1">
-          <p>Course description</p>
-          <div ref={editorRef}></div>
+  
+        {/* Course Description */}
+        <div>
+          <label className="font-medium">Course Description</label>
+          <div ref={editorRef} className="border border-gray-400 rounded p-2"></div>
         </div>
-
-        <div className="flex items-center justify-between flex-wrap">
-          <div className="flex flex-col gap-1">
-            <p>Course Price</p>
+  
+        {/* Course Price & Thumbnail */}
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          {/* Course Price */}
+          <div className="flex flex-col">
+            <label className="font-medium">Course Price</label>
             <input
-              onChange={(e) => setCoursePrice(e.target.value)}
-              value={coursePrice}
               type="number"
+              value={coursePrice}
+              onChange={(e) => setCoursePrice(e.target.value)}
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500"
+              className="outline-none py-2 px-3 rounded border border-gray-400 w-32"
               required
             />
           </div>
-
-          <div className="flex flex-col gap-1">
-            <p>Course Thumbnail</p>
-            <label htmlFor="thumbnailImage" className="flex items-center gap-3">
+  
+          {/* Course Thumbnail */}
+          <div>
+            <label className="font-medium">Course Thumbnail</label>
+            <label htmlFor="thumbnailImage" className="flex items-center gap-3 cursor-pointer">
               <img
                 src={assets.file_upload_icon}
-                alt="file upload icon"
-                className="p-3 bg-blue-500 rounded"
+                alt="upload icon"
+                className="p-3 bg-blue-500 rounded-lg hover:bg-blue-600 transition"
               />
               <input
-                onChange={(e) => setImage(e.target.files[0])}
-                accept="image/*"
-                hidden
                 type="file"
                 id="thumbnailImage"
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files[0])}
+                hidden
               />
-              <img
-                className="max-h-10"
-                src={image ? URL.createObjectURL(image) : ""}
-                alt=""
-              />
+              {image && <img className="h-10 rounded-md" src={URL.createObjectURL(image)} alt="Thumbnail preview" />}
             </label>
           </div>
         </div>
-
-        <div className="flex flex-col gap-1">
-          <p>Discount %</p>
+  
+        {/* Discount Input */}
+        <div>
+        <div><label className="font-medium">Discount %</label></div>
+          
           <input
-            onChange={(e) => setDiscount(e.target.value)}
-            value={discount}
             type="number"
+            value={discount}
+            onChange={(e) => setDiscount(e.target.value)}
             placeholder="0"
             min={0}
             max={100}
-            className="outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-500"
+            className="outline-none py-2 px-3 rounded border border-gray-400 w-28"
             required
           />
         </div>
-
+  
+        {/* Chapters Section */}
         <div>
           {chapters.map((chapter, chapterIndex) => (
             <div key={chapterIndex} className="bg-white border rounded-lg mb-4">
@@ -235,17 +237,13 @@ const AddCourse = () => {
                     src={assets.dropdown_icon}
                     width={14}
                     alt="dropdown icon"
-                    className={`mr-2 cursor-pointer transition-all ${
-                      chapter.collapsed && "-rotate-90"
-                    }`}
+                    className={`mr-2 cursor-pointer transition-all ${chapter.collapsed && "-rotate-90"}`}
                   />
                   <span className="font-semibold">
                     {chapterIndex + 1}. {chapter.chapterTitle}
                   </span>
                 </div>
-                <span className="text-gray-500">
-                  {chapter.chapterContent.length} Lectures
-                </span>
+                <span className="text-gray-500">{chapter.chapterContent.length} Lectures</span>
                 <img
                   onClick={() => handleChapter("remove", chapter.chapterId)}
                   src={assets.cross_icon}
@@ -256,143 +254,109 @@ const AddCourse = () => {
               {!chapter.collapsed && (
                 <div className="p-4">
                   {chapter.chapterContent.map((lecture, lectureIndex) => (
-                    <div
-                      key={lectureIndex}
-                      className="flex justify-between items-center mb-2"
-                    >
+                    <div key={lectureIndex} className="flex justify-between items-center mb-2">
                       <span>
                         {lectureIndex + 1}. {lecture.lectureTitle} -{" "}
                         {lecture.lectureDuration} mins -{" "}
-                        <a
-                          href={lecture.lectureUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600"
-                        >
+                        <a href={lecture.lectureUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600">
                           Link
                         </a>{" "}
-                        - {lecture.isPreviewFree ? "free preview" : "paid"}
+                        - {lecture.isPreviewFree ? "Free preview" : "Paid"}
                       </span>
                       <img
                         src={assets.cross_icon}
                         alt="cross icon"
-                        onClick={() =>
-                          handleLecture("remove", chapter.chapterId, lectureIndex)
-                        }
+                        onClick={() => handleLecture("remove", chapter.chapterId, lectureIndex)}
                         className="cursor-pointer"
                       />
                     </div>
                   ))}
-                  <div
-                    className="inline-flex bg-gray-100 p-2 rounded cursor-pointer mt-2"
+                  <button
+                    type="button"
+                    className="bg-gray-100 p-2 rounded mt-2 hover:bg-gray-200 transition"
                     onClick={() => handleLecture("add", chapter.chapterId)}
                   >
                     + Add Lectures
-                  </div>
+                  </button>
                 </div>
               )}
             </div>
           ))}
-          <div
-            className="flex justify-center bg-blue-100 p-2 rounded-lg cursor-pointer mt-2"
+          <button
+            type="button"
+            className="w-full bg-blue-100 p-2 rounded-lg hover:bg-blue-200 transition"
             onClick={() => handleChapter("add")}
           >
             + Add Chapter
-          </div>
+          </button>
         </div>
+  
+        {/* Popup Modal */}
         {showPopup && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-            <div className="bg-white text-gray-700 p-4 rounded relative w-full max-w-80">
-              <h2 className="text-lg font-semibold mb-4">Add lecture</h2>
+            <div className="bg-white text-gray-700 p-5 rounded-lg shadow-lg w-full max-w-sm relative">
+              <h2 className="text-lg font-semibold mb-4">Add Lecture</h2>
+  
               <div className="mb-2">
-                <p>Lecture title</p>
+                <label className="font-medium">Lecture Title</label>
                 <input
                   type="text"
                   className="mt-1 block w-full border rounded py-1 px-2"
                   value={lectureDetails.lectureTitle}
-                  onChange={(e) =>
-                    setLectureDetails({
-                      ...lectureDetails,
-                      lectureTitle: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setLectureDetails({ ...lectureDetails, lectureTitle: e.target.value })}
                 />
               </div>
-
+  
               <div className="mb-2">
-                <p>Duration (minutes)</p>
+                <label className="font-medium">Duration (minutes)</label>
                 <input
                   type="number"
                   className="mt-1 block w-full border rounded py-1 px-2"
                   value={lectureDetails.lectureDuration}
-                  onChange={(e) =>
-                    setLectureDetails({
-                      ...lectureDetails,
-                      lectureDuration: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setLectureDetails({ ...lectureDetails, lectureDuration: e.target.value })}
                 />
               </div>
-
+  
               <div className="mb-2">
-                <p>Lecture URL</p>
+                <label className="font-medium">Lecture URL</label>
                 <input
                   type="text"
                   className="mt-1 block w-full border rounded py-1 px-2"
                   value={lectureDetails.lectureUrl}
-                  onChange={(e) =>
-                    setLectureDetails({
-                      ...lectureDetails,
-                      lectureUrl: e.target.value,
-                    })
-                  }
+                  onChange={(e) => setLectureDetails({ ...lectureDetails, lectureUrl: e.target.value })}
                 />
               </div>
-
-              <div className="mb-2">
-                <p>Is Preview Free ?</p>
+  
+              <div className="mb-2 flex items-center">
+                <label className="font-medium mr-2">Is Preview Free?</label>
                 <input
                   type="checkbox"
-                  className="mt-1 block scale-125"
                   checked={lectureDetails.isPreviewFree}
-                  onChange={(e) =>
-                    setLectureDetails({
-                      ...lectureDetails,
-                      isPreviewFree: e.target.checked,
-                    })
-                  }
+                  onChange={(e) => setLectureDetails({ ...lectureDetails, isPreviewFree: e.target.checked })}
+                  className="scale-125"
                 />
               </div>
-
-              <button
-                className="w-full bg-blue-400 text-white px-4 py-2 rounded"
-                onClick={addLecture}
-              >
+  
+              <button className="w-full bg-blue-400 text-white px-4 py-2 rounded" onClick={addLecture}>
                 Add
               </button>
-
+  
               <img
                 onClick={() => setShowPopup(false)}
                 src={assets.cross_icon}
                 alt="cross icon"
-                className="absolute top-4 right-4 w-4 cursor-pointer"
+                className="absolute top-4 right-4 w-5 cursor-pointer"
               />
             </div>
           </div>
         )}
-        <button className="bg-black text-white w-max py-2.5 px-8 rounded my-4">
-          ADD
-        </button>
+  
+        {/* Submit Button */}
+        <button className="bg-black text-white w-max py-2.5 px-8 rounded my-4">ADD</button>
       </form>
     </div>
-    <div className="flex justify-center items-center h-80 bg-gray-100 p-4">
-  <img
-    src={assets.course_1_thumbnail} 
-    alt="add-course" 
-    className="w-full h-full object-cover rounded-lg  "
-  />
-</div>
-    </div>
+  </div>
+  
   );
 };
 
