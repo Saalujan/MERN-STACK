@@ -39,22 +39,23 @@ const Navbar = () => {
 
   return (
     <div
-      className={`flex items-center justify-between px-4 sm:px-10 md:px-14 lg:px-36 border-b border-gray-500 py-4 ${
-        isCourselistPage ? "bg-white" : "bg-cyan-100/70"
+      className={`flex items-center justify-between px-2 sm:px-10 md:px-5 lg:px-36 border-b-2 shadow-md  py-4 ${
+        isCourselistPage ? "bg-white" : "bg-200"
       }`}
     >
       <img onClick={() => navigate('/')}
         src={assets.logo}
         alt="logo"
-        className="w-16 lg:w-18 cursor-pointer"
+        className="w-16 lg:w-20 cursor-pointer"
       />
 
       <div className="hidden md:flex items-center gap-5 text-gray-500">
         <div>
           {user && (
             <>
-              <button onClick={becomeEducator}>{isEducator ? 'Educator DashBoard ' : 'Become Educator '}</button>
-              | <Link to="/my-enrollments">My Enrollments</Link>
+              {/* <button onClick={becomeEducator}>{isEducator ? 'Educator DashBoard ' : 'Become Educator '}</button> */}
+              {isEducator ? <button onClick={becomeEducator}>Educator DashBoard</button>:<Link to="/my-enrollments">My Enrollments</Link>}
+              
             </>
           )}
         </div>

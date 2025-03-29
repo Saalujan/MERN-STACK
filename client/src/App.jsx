@@ -15,7 +15,7 @@ import MyCourse from "./pages/educator/MyCourse";
 import Navbar from './components/student/Navbar';
 import 'quill/dist/quill.snow.css';
 import { ToastContainer } from 'react-toastify'
-import AboutUs from "./components/student/aboutUs";
+import AboutUs from "./components/student/AboutUs";
 import ContactUs from "./components/student/ContactUs";
 import PolicyPrivacy from "./components/student/PolicyPrivacy";
 
